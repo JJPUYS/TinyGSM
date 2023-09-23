@@ -246,7 +246,7 @@ class TinyGsmM590 : public TinyGsmModem<TinyGsmM590>,
         // goto set_dns; // TODO
         return true;
       }
-      delay(500);
+      vTaskDelay(500);
     }
     return false;
 
@@ -313,7 +313,7 @@ class TinyGsmM590 : public TinyGsmModem<TinyGsmM590>,
         sendAT(GF("+TCPCLOSE="), mux);
         waitResponse();
       }
-      delay(1000);
+      vTaskDelay(1000);
     }
     return false;
   }

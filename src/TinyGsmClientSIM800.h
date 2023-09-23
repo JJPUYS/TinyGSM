@@ -259,7 +259,7 @@ class TinyGsmSim800 : public TinyGsmModem<TinyGsmSim800>,
     waitResponse();
     if (!setPhoneFunctionality(0)) { return false; }
     if (!setPhoneFunctionality(1, true)) { return false; }
-    delay(3000);
+    vTaskDelay(3000);
     return init(pin);
   }
 
@@ -479,7 +479,7 @@ class TinyGsmSim800 : public TinyGsmModem<TinyGsmSim800>,
 
   bool playToolkitTone(uint8_t tone, uint32_t duration) {
     sendAT(GF("STTONE="), 1, tone);
-    delay(duration);
+    vTaskDelay(duration);
     sendAT(GF("STTONE="), 0);
     return waitResponse();
   }

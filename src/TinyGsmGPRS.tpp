@@ -125,7 +125,7 @@ class TinyGsmGPRS {
     for (uint32_t start = millis(); millis() - start < timeout_ms;) {
       thisModem().sendAT(GF("+CPIN?"));
       if (thisModem().waitResponse(GF("+CPIN:")) != 1) {
-        delay(1000);
+        vTaskDelay(1000);
         continue;
       }
       int8_t status =

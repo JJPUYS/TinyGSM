@@ -422,7 +422,7 @@ class TinyGsmXBee : public TinyGsmModem<TinyGsmXBee>,
           inCommandMode = false;
         }
       }
-      delay(250);
+      vTaskDelay(250);
     }
     return success;
   }
@@ -504,7 +504,7 @@ class TinyGsmXBee : public TinyGsmModem<TinyGsmXBee>,
     if (resetPin >= 0) {
       DBG("### Forcing a modem reset!\r\n");
       digitalWrite(resetPin, LOW);
-      delay(1);
+      vTaskDelay(1);
       digitalWrite(resetPin, HIGH);
     } else {
       DBG("### Attempting a modem software restart");
@@ -535,14 +535,14 @@ class TinyGsmXBee : public TinyGsmModem<TinyGsmXBee>,
       inCommandMode = false;  // Reset effectively exits command mode
 
     if (beeType == XBEE_S6B_WIFI)
-      delay(2000);  // Wifi module actually resets about 2 seconds later
+      vTaskDelay(2000);  // Wifi module actually resets about 2 seconds later
     else
-      delay(100);  // cellular modules wait 100ms before reset happens
+      vTaskDelay(100);  // cellular modules wait 100ms before reset happens
 
     // Wait until reboot completes and XBee responds to command mode call again
     for (uint32_t start = millis(); millis() - start < 60000L;) {
       if (commandMode(1)) break;
-      delay(250);  // wait a litle before trying again
+      vTaskDelay(250);  // wait a litle before trying again
     }
 
     if (beeType != XBEE_S6B_WIFI) {
@@ -760,7 +760,7 @@ class TinyGsmXBee : public TinyGsmModem<TinyGsmXBee>,
         retVal = true;
         break;
       }
-      delay(250);  // per Neil H. - more stable with delay
+      vTaskDelay(250);  // per Neil H. - more stable with delay
     }
     XBEE_COMMAND_END_DECORATOR
     return retVal;
@@ -1090,7 +1090,7 @@ class TinyGsmXBee : public TinyGsmModem<TinyGsmXBee>,
         gotIP = true;
         break;
       }
-      delay(2500);  // wait a bit before trying again
+      vTaskDelay(2500);  // wait a bit before trying again
     }
 
     XBEE_COMMAND_END_DECORATOR
@@ -1472,7 +1472,7 @@ class TinyGsmXBee : public TinyGsmModem<TinyGsmXBee>,
     while (!success && triesMade < retries) {
       // Cannot send anything for 1 "guard time" before entering command mode
       // Default guard time is 1s, but the init fxn decreases it to 100 ms
-      delay(guardTime + 10);
+      vTaskDelay(guardTime + 10);
       streamWrite(GF("+++"));  // enter command mode
 
       if (beeType != XBEE_S6B_WIFI) {
@@ -1488,11 +1488,11 @@ class TinyGsmXBee : public TinyGsmModem<TinyGsmXBee>,
         if (triesUntilReset == 0) {
           triesUntilReset = 4;
           pinReset();  // if it's unresponsive, reset
-          delay(250);  // a short delay to allow it to come back up
+          vTaskDelay(250);  // a short delay to allow it to come back up
           // TODO(SRGDamia1) optimize this
         }
         if (beeType == XBEE_S6B_WIFI) {
-          delay(5000);  // WiFi module frozen, wait longer
+          vTaskDelay(5000);  // WiFi module frozen, wait longer
         }
       }
       triesMade++;

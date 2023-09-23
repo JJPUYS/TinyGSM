@@ -247,7 +247,7 @@ class TinyGsmUBLOX : public TinyGsmModem<TinyGsmUBLOX>,
   bool restartImpl(const char* pin = NULL) {
     if (!testAT()) { return false; }
     if (!setPhoneFunctionality(16)) { return false; }
-    delay(3000);  // TODO(?):  Verify delay timing here
+    vTaskDelay(3000);
     return init(pin);
   }
 
@@ -666,7 +666,7 @@ class TinyGsmUBLOX : public TinyGsmModem<TinyGsmUBLOX>,
     sendAT(GF("+USOWR="), mux, ',', (uint16_t)len);
     if (waitResponse(GF("@")) != 1) { return 0; }
     // 50ms delay, see AT manual section 25.10.4
-    delay(50);
+    vTaskDelay(50);
     stream.write(reinterpret_cast<const uint8_t*>(buff), len);
     stream.flush();
     if (waitResponse(GF(GSM_NL "+USOWR:")) != 1) { return 0; }

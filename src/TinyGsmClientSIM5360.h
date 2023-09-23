@@ -236,7 +236,7 @@ class TinyGsmSim5360 : public TinyGsmModem<TinyGsmSim5360>,
 
   bool radioOffImpl() {
     if (!setPhoneFunctionality(4)) { return false; }
-    delay(3000);
+    vTaskDelay(3000);
     return true;
   }
 
@@ -689,7 +689,7 @@ class TinyGsmSim5360 : public TinyGsmModem<TinyGsmSim5360>,
           // Need to close all open sockets and release the network library.
           // User will then need to reconnect.
           DBG("### Network error!");
-          if (!isGprsConnected()) { gprsDisconnect(); }
+          if (isGprsConnected()) { gprsDisconnect(); }
           data = "";
         }
       }

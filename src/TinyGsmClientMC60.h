@@ -201,7 +201,7 @@ class TinyGsmMC60 : public TinyGsmModem<TinyGsmMC60>,
     if (!testAT()) { return false; }
     if (!setPhoneFunctionality(0)) { return false; }
     if (!setPhoneFunctionality(1, true)) { return false; }
-    delay(3000);
+    vTaskDelay(3000);
     return init(pin);
   }
 
@@ -317,7 +317,7 @@ class TinyGsmMC60 : public TinyGsmModem<TinyGsmMC60>,
     for (uint32_t start = millis(); millis() - start < timeout_ms;) {
       sendAT(GF("+CPIN?"));
       if (waitResponse(GF(GSM_NL "+CPIN:")) != 1) {
-        delay(1000);
+        vTaskDelay(1000);
         continue;
       }
       int8_t status = waitResponse(GF("READY"), GF("SIM PIN"), GF("SIM PUK"),

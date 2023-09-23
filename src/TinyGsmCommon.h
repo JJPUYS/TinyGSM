@@ -10,7 +10,7 @@
 #define SRC_TINYGSMCOMMON_H_
 
 // The current library version number
-#define TINYGSM_VERSION "0.11.7"
+#define TINYGSM_VERSION "0.11.8"
 
 #if defined(SPARK) || defined(PARTICLE)
 #include "Particle.h"
@@ -34,7 +34,7 @@
 
 #ifndef TINY_GSM_YIELD
 #define TINY_GSM_YIELD() \
-  { delay(TINY_GSM_YIELD_MS); }
+  { vTaskDelay(TINY_GSM_YIELD_MS); }
 #endif
 
 #define TINY_GSM_ATTR_NOT_AVAILABLE \
@@ -102,7 +102,7 @@ uint32_t TinyGsmAutoBaud(T& SerialAT, uint32_t minimum = 9600,
 
     DBG("Trying baud rate", rate, "...");
     SerialAT.begin(rate);
-    delay(10);
+    vTaskDelay(10);
     for (int j = 0; j < 10; j++) {
       SerialAT.print("AT\r\n");
       String input = SerialAT.readString();

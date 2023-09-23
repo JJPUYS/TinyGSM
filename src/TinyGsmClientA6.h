@@ -179,7 +179,7 @@ class TinyGsmA6 : public TinyGsmModem<TinyGsmA6>,
   bool restartImpl(const char* pin = NULL) {
     if (!testAT()) { return false; }
     sendAT(GF("+RST=1"));
-    delay(3000);
+    vTaskDelay(3000);
     return init(pin);
   }
 
@@ -326,7 +326,7 @@ class TinyGsmA6 : public TinyGsmModem<TinyGsmA6>,
 
     sendAT(GF("+VTS="), cmd);
     if (waitResponse(10000L) == 1) {
-      delay(duration_ms);
+      vTaskDelay(duration_ms);
       return true;
     }
     return false;
