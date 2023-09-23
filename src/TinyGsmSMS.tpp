@@ -13,6 +13,10 @@
 
 #define TINY_GSM_MODEM_HAS_SMS
 
+//Check new sms mode
+#define CHECKSMSLATEST 0
+#define CHECKSMSOLDEST 1
+
 template <class modemType>
 class TinyGsmSMS {
  public:
@@ -28,7 +32,58 @@ class TinyGsmSMS {
   bool sendSMS_UTF16(const char* const number, const void* text, size_t len) {
     return thisModem().sendSMS_UTF16Impl(number, text, len);
   }
-
+  int newMessageInterrupt(String interrupt){
+    int Start=interrupt.indexOf(',');
+    int Stop=interrupt.indexOf('\n',Start);
+    int index=interrupt.substring(Start+1,Stop-1).toInt();
+    return index;
+  }
+  String lastestSender="";
+  String readSMS(int index){
+    thisModem().sendAT(GF("+CMGF=1"));
+    thisModem().waitResponse();  
+    thisModem().sendAT(GF("+CMGRD="), index); 
+    // thisModem().sendAT(GF("+CMGR="), index); 
+    String message="";
+    lastestSender="";
+    thisModem().streamSkipUntil('"');
+    thisModem().streamSkipUntil('"');
+    thisModem().streamSkipUntil('"');
+    lastestSender=thisModem().stream.readStringUntil('"');
+    thisModem().streamSkipUntil('\n');
+    // message=thisModem().stream.readStringUntil('\n');
+    message = thisModem().stream.readString();
+    int i  = message.indexOf("\r\nOK\r\n");
+    message = message.substring(0, i);
+    return message;
+  }
+  String getSenderNumber(){
+    return lastestSender;
+  }
+  int newMessageIndex(bool mode){
+    thisModem().sendAT(GF("+CMGF=1"));
+    thisModem().waitResponse();  
+    thisModem().sendAT(GF("+CMGL=\"ALL\""));
+    String h = thisModem().stream.readString();
+    int i;
+    if(mode){
+       i  = h.indexOf("+CMGL: ");
+    }else{
+       i  = h.lastIndexOf("+CMGL: ");
+    }
+    h = h.substring(i+7);
+    h = h.substring(0,h.indexOf(",\""));
+    int index=h.toInt();
+    // int index=h.substring(i+7,i+9).toInt();
+    if(index<=0)return 0;
+    return index;
+  }
+  bool emptySMSBuffer(){
+    thisModem().sendAT(GF("+CMGF=1"));
+    thisModem().waitResponse(); 
+    thisModem().sendAT(GF("+CMGDA=\"DEL ALL\""));
+    return thisModem().waitResponse(60000L) == 1;
+  }
   /*
    * CRTP Helper
    */
